@@ -1,0 +1,221 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Nouveau produit - Administration{% endblock %}
+
+{% block page_title %}
+    <i class="bi bi-plus-circle me-2"></i>Nouveau produit
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-plus-circle me-2"></i>Ajouter un nouveau produit
+                </h5>
+                <a href="{{ path('admin_product_index') }}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left me-1"></i>Retour à la liste
+                </a>
+            </div>
+            <div class="card-body">
+                {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                
+                <div class="row">
+                    <!-- Nom du produit -->
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form.name, 'Nom du produit', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Chemise Oxford Bleue'}}) }}
+                        {{ form_errors(form.name) }}
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': '4', 'placeholder': 'Description détaillée du produit...'}}) }}
+                        {{ form_errors(form.description) }}
+                    </div>
+                    
+                    <!-- Prix et Stock -->
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.price, 'Prix (€)', {'label_attr': {'class': 'form-label'}}) }}
+                        <div class="input-group">
+                            {{ form_widget(form.price, {'attr': {'class': 'form-control', 'step': '0.01', 'min': '0', 'placeholder': '0.00'}}) }}
+                            <span class="input-group-text">€</span>
+                        </div>
+                        {{ form_errors(form.price) }}
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.stock, 'Stock', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.stock, {'attr': {'class': 'form-control', 'min': '0', 'placeholder': '0'}}) }}
+                        {{ form_errors(form.stock) }}
+                    </div>
+                    
+                    <!-- Catégorie -->
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.category, 'Catégorie', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.category, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_errors(form.category) }}
+                    </div>
+                    
+                    <!-- Marque -->
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.brand, 'Marque', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.brand, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Nike, Adidas...'}}) }}
+                        {{ form_errors(form.brand) }}
+                    </div>
+                    
+                    <!-- Taille et Couleur -->
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.size, 'Taille', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.size, {'attr': {'class': 'form-control', 'placeholder': 'Ex: M, L, XL...'}}) }}
+                        {{ form_errors(form.size) }}
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(form.color, 'Couleur', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.color, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Rouge, Bleu...'}}) }}
+                        {{ form_errors(form.color) }}
+                    </div>
+                    
+                    <!-- Image -->
+                    <div class="col-md-12 mb-3">
+                        {{ form_label(form.imageFile, 'Image du produit', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.imageFile, {'attr': {'class': 'form-control', 'accept': 'image/*'}}) }}
+                        {{ form_errors(form.imageFile) }}
+                        <small class="form-text text-muted">Formats acceptés: JPG, PNG, GIF (max 2MB)</small>
+                        
+                        <!-- Preview container -->
+                        <div id="imagePreview" class="mt-3" style="display: none;">
+                            <img id="previewImg" src="" alt="Aperçu" class="img-thumbnail" style="max-width: 200px;">
+                        </div>
+                    </div>
+                    
+                    <!-- Produit actif -->
+                    <div class="col-md-12 mb-3">
+                        <div class="form-check form-switch">
+                            {{ form_widget(form.isActive, {'attr': {'class': 'form-check-input', 'role': 'switch'}}) }}
+                            {{ form_label(form.isActive, 'Produit actif', {'label_attr': {'class': 'form-check-label'}}) }}
+                        </div>
+                        {{ form_errors(form.isActive) }}
+                        <small class="form-text text-muted">Les produits inactifs ne sont pas visibles sur le site</small>
+                    </div>
+                </div>
+                
+                <!-- Submit buttons -->
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-2"></i>Créer le produit
+                    </button>
+                    <a href="{{ path('admin_product_index') }}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle me-2"></i>Annuler
+                    </a>
+                </div>
+                
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar with tips -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-lightbulb me-2"></i>Conseils
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6 class="text-primary">
+                        <i class="bi bi-image me-1"></i>Images
+                    </h6>
+                    <small class="text-muted">
+                        Utilisez des images de haute qualité avec un fond neutre. Format recommandé: 800x800px.
+                    </small>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="text-primary">
+                        <i class="bi bi-pencil me-1"></i>Description
+                    </h6>
+                    <small class="text-muted">
+                        Décrivez les matériaux, la coupe, et les occasions d'usage. Soyez précis sur les tailles.
+                    </small>
+                </div>
+                
+                <div class="mb-3">
+                    <h6 class="text-primary">
+                        <i class="bi bi-tags me-1"></i>Prix
+                    </h6>
+                    <small class="text-muted">
+                        Assurez-vous que le prix est compétitif et correspond à la qualité du produit.
+                    </small>
+                </div>
+                
+                <div class="mb-0">
+                    <h6 class="text-primary">
+                        <i class="bi bi-box me-1"></i>Stock
+                    </h6>
+                    <small class="text-muted">
+                        Gardez un stock suffisant pour éviter les ruptures. Le système vous alertera en cas de stock faible.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+// Image preview functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.querySelector('input[type="file"]');
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    const previewImg = document.getElementById('previewImg');
+                    
+                    previewImg.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        const forms = document.getElementsByClassName('needs-validation');
+        Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Auto-format price input
+const priceInput = document.querySelector('input[name="product[price]"]');
+if (priceInput) {
+    priceInput.addEventListener('blur', function() {
+        if (this.value) {
+            this.value = parseFloat(this.value).toFixed(2);
+        }
+    });
+}
+</script>
+{% endblock %}

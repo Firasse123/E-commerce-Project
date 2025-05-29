@@ -1,0 +1,271 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des produits - Administration{% endblock %}
+
+{% block page_title %}
+    <i class="bi bi-box-seam me-2"></i>Gestion des produits
+{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Liste des produits</h2>
+    <a href="{{ path('admin_product_new') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-2"></i>Ajouter un produit
+    </a>
+</div>
+
+<!-- Filters and Search -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Rechercher un produit..." id="searchInput">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="categoryFilter">
+                    <option value="">Toutes les catégories</option>
+                    <option value="chemises">Chemises</option>
+                    <option value="pantalons">Pantalons</option>
+                    <option value="vestes">Vestes</option>
+                    <option value="accessoires">Accessoires</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="statusFilter">
+                    <option value="">Tous les statuts</option>
+                    <option value="active">Actif</option>
+                    <option value="inactive">Inactif</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-outline-secondary w-100" onclick="resetFilters()">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Reset
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Products Table -->
+<div class="card">
+    <div class="card-body">
+        {% if products %}
+            <div class="table-responsive">
+                <table class="table table-hover" id="productsTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Image</th>
+                            <th>Nom</th>
+                            <th>Catégorie</th>
+                            <th>Prix</th>
+                            <th>Stock</th>
+                            <th>Statut</th>
+                            <th>Date de création</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                            <tr>
+                                <td>
+                                    {% if product.image %}
+                                        <img src="{{ asset('uploads/products/' ~ product.image) }}" 
+                                             alt="{{ product.name }}" 
+                                             class="img-thumbnail" 
+                                             style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="bg-light d-flex align-items-center justify-content-center" 
+                                             style="width: 50px; height: 50px; border-radius: 8px;">
+                                            <i class="bi bi-image text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <strong>{{ product.name }}</strong>
+                                    {% if product.description %}
+                                        <br>
+                                        <small class="text-muted">{{ product.description|slice(0, 50) }}{% if product.description|length > 50 %}...{% endif %}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if product.category %}
+                                        <span class="badge bg-info">{{ product.category.name }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <strong>{{ product.price|number_format(2, ',', ' ') }} €</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{% if product.stock <= 5 %}danger{% elseif product.stock <= 10 %}warning{% else %}success{% endif %}">
+                                        {{ product.stock }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" 
+                                               {% if product.isActive %}checked{% endif %}
+                                               onchange="toggleProductStatus({{ product.id }}, this)">
+                                        <label class="form-check-label">
+                                            <span class="badge bg-{% if product.isActive %}success{% else %}secondary{% endif %}">
+                                                {% if product.isActive %}Actif{% else %}Inactif{% endif %}
+                                            </span>
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ product.createdAt|date('d/m/Y') }}</small>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ path('admin_product_show', {id: product.id}) }}" 
+                                           class="btn btn-sm btn-outline-info" 
+                                           title="Voir">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ path('admin_product_edit', {id: product.id}) }}" 
+                                           class="btn btn-sm btn-outline-primary" 
+                                           title="Modifier">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger" 
+                                                title="Supprimer"
+                                                onclick="confirmDelete({{ product.id }}, '{{ product.name }}')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination (if needed) -->
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <div>
+                    <small class="text-muted">Affichage de {{ products|length }} produit(s)</small>
+                </div>
+                <nav>
+                    <!-- Add pagination here if needed -->
+                </nav>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-box-seam" style="font-size: 4rem; color: #ccc;"></i>
+                <h4 class="text-muted mt-3">Aucun produit trouvé</h4>
+                <p class="text-muted">Commencez par ajouter votre premier produit</p>
+                <a href="{{ path('admin_product_new') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>Ajouter un produit
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                    Confirmer la suppression
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer le produit <strong id="productName"></strong> ?</p>
+                <p class="text-muted">Cette action est irréversible.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <form id="deleteForm" method="post" class="d-inline">
+                    <input type="hidden" name="_token" id="deleteToken">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-2"></i>Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+// Search functionality
+document.getElementById('searchInput').addEventListener('input', function() {
+    filterTable();
+});
+
+document.getElementById('categoryFilter').addEventListener('change', function() {
+    filterTable();
+});
+
+document.getElementById('statusFilter').addEventListener('change', function() {
+    filterTable();
+});
+
+function filterTable() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const categoryFilter = document.getElementById('categoryFilter').value.toLowerCase();
+    const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+    
+    const tableRows = document.querySelectorAll('#productsTable tbody tr');
+    
+    tableRows.forEach(row => {
+        const productName = row.cells[1].textContent.toLowerCase();
+        const category = row.cells[2].textContent.toLowerCase();
+        const status = row.cells[5].textContent.toLowerCase();
+        
+        const matchesSearch = productName.includes(searchTerm);
+        const matchesCategory = !categoryFilter || category.includes(categoryFilter);
+        const matchesStatus = !statusFilter || status.includes(statusFilter);
+        
+        if (matchesSearch && matchesCategory && matchesStatus) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function resetFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('categoryFilter').value = '';
+    document.getElementById('statusFilter').value = '';
+    filterTable();
+}
+
+// Toggle product status
+function toggleProductStatus(productId, checkbox) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = `/admin/products/${productId}/toggle-status`;
+    
+    const csrfToken = document.createElement('input');
+    csrfToken.type = 'hidden';
+    csrfToken.name = '_token';
+    csrfToken.value = '{{ csrf_token('toggle_status') }}';
+    
+    form.appendChild(csrfToken);
+    document.body.appendChild(form);
+    form.submit();
+}
+
+// Delete confirmation
+function confirmDelete(productId, productName) {
+    document.getElementById('productName').textContent = productName;
+    document.getElementById('deleteForm').action = `/admin/products/${productId}/delete`;
+    document.getElementById('deleteToken').value = '{{ csrf_token('delete') }}';
+    
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+}
+</script>
+{% endblock %}

@@ -1,0 +1,308 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - Men's Store{% endblock %}
+
+{% block body %}
+<div class="min-vh-100 d-flex align-items-center bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-6">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <h1 class="h3 text-gray-900 mb-1">Créer un compte</h1>
+                            <p class="text-muted">Rejoignez notre communauté de style masculin</p>
+                        </div>
+
+                        {% for message in app.flashes('error') %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+
+                        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                        
+                        <div class="row">
+                            {% if form.firstname is defined %}
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.firstname, 'Prénom', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    {{ form_widget(form.firstname, {'attr': {'class': 'form-control', 'placeholder': 'John'}}) }}
+                                </div>
+                                {{ form_errors(form.firstname) }}
+                            </div>
+                            {% endif %}
+
+                            {% if form.lastname is defined %}
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.lastname, 'Nom', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    {{ form_widget(form.lastname, {'attr': {'class': 'form-control', 'placeholder': 'Doe'}}) }}
+                                </div>
+                                {{ form_errors(form.lastname) }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.email, 'Adresse email', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'votre@email.com'}}) }}
+                            </div>
+                            {{ form_errors(form.email) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.password.first, 'Mot de passe', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                {{ form_widget(form.password.first, {'attr': {'class': 'form-control', 'placeholder': '••••••••', 'id': 'password'}}) }}
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="fas fa-eye" id="toggleIcon"></i>
+                                </button>
+                            </div>
+                            {{ form_errors(form.password.first) }}
+                            <div class="form-text">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Minimum 8 caractères, avec au moins une majuscule, une minuscule et un chiffre
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.password.second, 'Confirmer le mot de passe', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                {{ form_widget(form.password.second, {'attr': {'class': 'form-control', 'placeholder': '••••••••', 'id': 'passwordConfirm'}}) }}
+                                <button class="btn btn-outline-secondary" type="button" id="togglePasswordConfirm">
+                                    <i class="fas fa-eye" id="toggleIconConfirm"></i>
+                                </button>
+                            </div>
+                            {{ form_errors(form.password.second) }}
+                        </div>
+
+                        {% if form.phone is defined %}
+                        <div class="mb-3">
+                            {{ form_label(form.phone, 'Téléphone (optionnel)', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                {{ form_widget(form.phone, {'attr': {'class': 'form-control', 'placeholder': '+33 6 12 34 56 78'}}) }}
+                            </div>
+                            {{ form_errors(form.phone) }}
+                        </div>
+                        {% endif %}
+
+                        {% if form.agreeTerms is defined %}
+                        <div class="mb-4">
+                            <div class="form-check">
+                                {{ form_widget(form.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
+                                {{ form_label(form.agreeTerms, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                            </div>
+                            {{ form_errors(form.agreeTerms) }}
+                        </div>
+                        {% endif %}
+
+                        <div class="d-grid mb-4">
+                            <button class="btn btn-primary btn-lg" type="submit">
+                                <i class="fas fa-user-plus me-2"></i>
+                                Créer mon compte
+                            </button>
+                        </div>
+
+                        {{ form_end(form) }}
+
+                        <div class="text-center">
+                            <div class="small">
+                                <span class="text-muted">Déjà un compte ?</span>
+                                <a href="{{ path('app_login') }}" class="text-decoration-none">
+                                    Se connecter
+                                </a>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="text-center">
+                            <a href="{{ path('app_home') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-home me-2"></i>
+                                Retour à l'accueil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <div class="small text-muted">
+                        <p class="mb-1">© {{ 'now'|date('Y') }} Men's Store. Tous droits réservés.</p>
+                        <div class="mt-2">
+                            <i class="fas fa-shield-alt me-1"></i>
+                            Vos données sont sécurisées et protégées
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Toggle password visibility
+    function setupPasswordToggle(toggleId, inputId, iconId) {
+        const toggle = document.getElementById(toggleId);
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+
+        if (toggle && input && icon) {
+            toggle.addEventListener('click', function() {
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                
+                if (type === 'text') {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+        }
+    }
+
+    setupPasswordToggle('togglePassword', 'password', 'toggleIcon');
+    setupPasswordToggle('togglePasswordConfirm', 'passwordConfirm', 'toggleIconConfirm');
+
+    // Password strength indicator
+    const passwordInput = document.getElementById('password');
+    const passwordConfirmInput = document.getElementById('passwordConfirm');
+
+    if (passwordInput) {
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            const strength = checkPasswordStrength(password);
+            updatePasswordStrength(strength);
+        });
+    }
+
+    if (passwordConfirmInput) {
+        passwordConfirmInput.addEventListener('input', function() {
+            const password = passwordInput.value;
+            const confirmPassword = this.value;
+            checkPasswordMatch(password, confirmPassword);
+        });
+    }
+
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        const checks = {
+            length: password.length >= 8,
+            lowercase: /[a-z]/.test(password),
+            uppercase: /[A-Z]/.test(password),
+            number: /\d/.test(password),
+            special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+        };
+
+        for (let check in checks) {
+            if (checks[check]) strength++;
+        }
+
+        return { strength, checks };
+    }
+
+    function updatePasswordStrength(result) {
+        // You can add visual feedback here if needed
+    }
+
+    function checkPasswordMatch(password, confirmPassword) {
+        const confirmInput = document.getElementById('passwordConfirm');
+        if (confirmPassword && password !== confirmPassword) {
+            confirmInput.setCustomValidity('Les mots de passe ne correspondent pas');
+        } else {
+            confirmInput.setCustomValidity('');
+        }
+    }
+});
+</script>
+
+<style>
+.card {
+    border-radius: 1rem;
+}
+
+.input-group-text {
+    background-color: #f8f9fc;
+    border-color: #d1d3e2;
+    color: #5a5c69;
+}
+
+.form-control:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.form-control:focus + .input-group-text,
+.input-group .form-control:focus ~ .input-group-text {
+    border-color: #4e73df;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.bg-light {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+}
+
+.alert {
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.form-control {
+    border-radius: 0 0.375rem 0.375rem 0;
+}
+
+.input-group-text {
+    border-radius: 0.375rem 0 0 0.375rem;
+}
+
+.btn-outline-secondary {
+    border-radius: 0.5rem;
+}
+
+.form-errors {
+    color: #e74a3b;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.form-errors ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.form-errors li {
+    margin-bottom: 0.25rem;
+}
+
+.form-errors li:before {
+    content: "⚠ ";
+    margin-right: 0.25rem;
+}
+</style>
+{% endblock %}

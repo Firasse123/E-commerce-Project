@@ -1,0 +1,75 @@
+{# templates/emails/order_confirmation.html.twig #}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Confirmation de votre commande</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        h2 {
+            color: #2c3e50;
+        }
+        .order-summary {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .order-summary th, .order-summary td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .order-summary th {
+            background-color: #f4f4f4;
+            text-align: left;
+        }
+        .total {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <h2>Merci pour votre commande !</h2>
+
+    <p>Bonjour {{ order.deliveryFirstName }},</p>
+
+    <p>Nous avons bien reçu votre commande et nous la traitons actuellement.</p>
+
+    <h3>Résumé de votre commande :</h3>
+
+    <table class="order-summary">
+        <thead>
+            <tr>
+                <th>Produit</th>
+                <th>Quantité</th>
+                <th>Prix unitaire</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+      
+    </table>
+
+    <p class="total">Montant total : {{ order.total|number_format(2, ',', ' ') }} €</p>
+
+    <p>Adresse de livraison :</p>
+    <p>
+        {{ order.deliveryAddress }}<br>
+        Code postal : {{ order.deliveryZipCode }}
+    </p>
+
+    <p>Nous vous remercions pour votre confiance.<br>À bientôt !</p>
+
+    <div class="footer">
+        <p>Ce message est généré automatiquement, merci de ne pas y répondre.</p>
+    </div>
+</body>
+</html>

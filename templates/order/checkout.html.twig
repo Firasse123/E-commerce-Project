@@ -1,0 +1,136 @@
+{# templates/order/checkout.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Finaliser ma commande{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-lg-8">
+        <h1><i class="fas fa-credit-card"></i> Finaliser ma commande</h1>
+        
+        {{ form_start(form, {'attr': {'class': 'checkout-form'}}) }}
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Informations de livraison</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_row(form.deliveryFirstName, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.deliveryLastName, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+                
+                {{ form_row(form.deliveryAddress, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                {{ form_row(form.billingAddress, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                {{ form_row(form.phone, {'attr': {'class': 'form-control'}}) }}
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Mode de paiement</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="payment_method" id="card" value="card" checked>
+                    <label class="form-check-label" for="card">
+                        <i class="fas fa-credit-card"></i> Carte bancaire
+                    </label>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="payment_method" id="paypal" value="paypal">
+                    <label class="form-check-label" for="paypal">
+                        <i class="fab fa-paypal"></i> PayPal
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="payment_method" id="transfer" value="transfer">
+                    <label class="form-check-label" for="transfer">
+                        <i class="fas fa-university"></i> Virement bancaire
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        {{ form_row(form.notes, {'attr': {'class': 'form-control', 'rows': 3, 'placeholder': 'Commentaires ou instructions spéciales...'}}) }}
+        
+       
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Récapitulatif de commande</h5>
+            </div>
+            <div class="card-body">
+                {% for item in cart.cartItems %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">{{ item.product.name }}</h6>
+                            <small class="text-muted">Quantité: {{ item.quantity }}</small>
+                        </div>
+                        <span>{{ (item.product.price * item.quantity)|number_format(2) }}€</span>
+                    </div>
+                {% endfor %}
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Sous-total:</span>
+                    <span>{{ cart.total|number_format(2) }}€</span>
+                </div>
+                
+                {% set shipping = cart.total >= 50 ? 0 : 5.99 %}
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Livraison:</span>
+                    <span>
+                        {% if shipping == 0 %}
+                            <span class="text-success">Gratuite</span>
+                        {% else %}
+                            {{ shipping|number_format(2) }}€
+                        {% endif %}
+                    </span>
+                </div>
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between">
+                    <strong>Total:</strong>
+                    <strong class="text-primary">{{ (cart.total + shipping)|number_format(2) }}€</strong>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6><i class="fas fa-truck text-primary"></i> Livraison</h6>
+                <p class="small text-muted mb-2">Délai de livraison: 2-3 jours ouvrés</p>
+                <p class="small text-muted mb-0">Livraison en point relais ou à domicile</p>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6><i class="fas fa-shield-alt text-success"></i> Sécurité</h6>
+                <p class="small text-muted mb-0">Paiement 100% sécurisé par cryptage SSL</p>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a href="{{ path('cart_index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Retour au panier
+            </a>
+            <button type="submit" class="btn btn-success btn-lg">
+                <i class="fas fa-check"></i> Confirmer ma commande
+            </button>
+        </div>
+        
+        {{ form_end(form) }}
+ 
+{% endblock %}

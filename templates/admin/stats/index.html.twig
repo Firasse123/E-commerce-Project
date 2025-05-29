@@ -1,0 +1,257 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Statistiques détaillées - Administration{% endblock %}
+
+{% block page_title %}
+    <i class="bi bi-graph-up me-2"></i>Statistiques détaillées
+{% endblock %}
+
+{% block body %}
+<div class="row mb-4">
+    <!-- Overview Cards -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ orderStats.totalOrders }}</h4>
+                        <p class="mb-0">Commandes totales</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-cart-check" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ orderStats.totalRevenue|number_format(2, ',', ' ') }} €</h4>
+                        <p class="mb-0">Chiffre d'affaires</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-currency-euro" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ orderStats.todayOrders }}</h4>
+                        <p class="mb-0">Commandes aujourd'hui</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-calendar-day" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ (orderStats.totalRevenue / orderStats.totalOrders)|number_format(2, ',', ' ') }} €</h4>
+                        <p class="mb-0">Panier moyen</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-bag-check" style="font-size: 2rem;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Revenue Chart -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-graph-up me-2"></i>Évolution du chiffre d'affaires (30 derniers jours)
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="revenueChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Top Products -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-trophy me-2"></i>Top produits
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if topProducts %}
+                    <div class="list-group list-group-flush">
+                        {% for product in topProducts %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <strong>{{ product.name }} </strong>
+                                    <br>
+                                    <small class="text-muted">{{ product.price|number_format(2, ',', ' ') }} €</small>
+                                </div>
+                                <span class="badge bg-primary rounded-pill">{{ product.totalSold ?? 0 }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center">Aucune donnée disponible</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Monthly Stats -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-calendar3 me-2"></i>Statistiques mensuelles
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Registrations -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-people me-2"></i>Inscriptions utilisateurs (30 derniers jours)
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="registrationChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<script>
+// Revenue Chart
+const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+const revenueChart = new Chart(revenueCtx, {
+    type: 'line',
+    data: {
+        labels: [
+            {% for day in dailyRevenue %}
+                '{{ day.date|date("d/m") }}'{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ],
+        datasets: [{
+            label: 'Chiffre d\'affaires (€)',
+            data: [
+                {% for day in dailyRevenue %}
+                    {{ day.revenue ?? 0 }}{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.1)',
+            tension: 0.1,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return value + ' €';
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Monthly Chart
+const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+const monthlyChart = new Chart(monthlyCtx, {
+    type: 'bar',
+    data: {
+        labels: [
+            {% for month in monthlyStats %}
+                '{{ month.month }}/{{ month.year }}'{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ],
+        datasets: [{
+            label: 'Commandes',
+            data: [
+                {% for month in monthlyStats %}
+                    {{ month.orders }}{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            backgroundColor: 'rgba(54, 162, 235, 0.😎',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }, {
+            label: 'Chiffre d\'affaires (€)',
+            data: [
+                {% for month in monthlyStats %}
+                    {{ month.revenue ?? 0 }}{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            backgroundColor: 'rgba(255, 99, 132, 0.😎',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+            yAxisID: 'y1'
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+            },
+            y1: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                grid: {
+                    drawOnChartArea: false,
+                },
+                ticks: {
+                    callback: function(value) {
+                        return value + ' €';
+                    }
+                }
+            }
+        }
+    }
+});
+
+
+</script>
+{% endblock %}

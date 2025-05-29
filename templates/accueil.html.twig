@@ -1,0 +1,427 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Men's Shop{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Styles spécifiques pour la page d'accueil */
+        .hero-section {
+            background: linear-gradient(rgba(52, 58, 64, 0.7), rgba(52, 58, 64, 0.7)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><rect fill="%23495057" width="1200" height="400"/><circle cx="200" cy="100" r="50" fill="rgba(255,255,255,0.1)"/><circle cx="800" cy="300" r="80" fill="rgba(255,255,255,0.05)"/><rect x="600" y="150" width="100" height="100" fill="rgba(255,255,255,0.08)"/></svg>');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .btn-hero {
+            background-color: #28a745;
+            border-color: #28a745;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-hero:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+            transform: translateY(-2px);
+        }
+
+        .category-card {
+            background: #f8f9fa;
+            border: none;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            color: #343a40;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-left: 4px solid #28a745;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stats-section {
+            background-color: #343a40;
+            color: white;
+            padding: 60px 0;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .newsletter-section {
+            background-color: #f8f9fa;
+            padding: 60px 0;
+        }
+
+        .product-placeholder {
+            height: 250px;
+            background: linear-gradient(135deg, #6c757d, #495057);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            border-radius: 0.375rem;
+        }
+
+        .section-title {
+            position: relative;
+            margin-bottom: 3rem;
+            font-weight: bold;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: #28a745;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Style Masculin</h1>
+            <p class="hero-subtitle">Découvrez notre collection de vêtements pour homme moderne</p>
+            <a href="#produits" class="btn btn-success btn-hero">Découvrir la collection</a>
+        </div>
+    </section>
+
+    <!-- Catégories -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center section-title">Nos Catégories</h2>
+            <div class="row g-4">
+                <div class="col-md-3 col-sm-6">
+                    <div class="card category-card text-center p-4">
+                        <div class="category-icon">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                        <h5>T-Shirts</h5>
+                        <p class="text-muted">Confort et style au quotidien</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card category-card text-center p-4">
+                        <div class="category-icon">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h5>Chemises</h5>
+                        <p class="text-muted">Élégance pour toutes occasions</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card category-card text-center p-4">
+                        <div class="category-icon">
+                            <i class="fas fa-cut"></i>
+                        </div>
+                        <h5>Pantalons</h5>
+                        <p class="text-muted">Du casual au formel</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card category-card text-center p-4">
+                        <div class="category-icon">
+                            <i class="fas fa-shoe-prints"></i>
+                        </div>
+                        <h5>Chaussures</h5>
+                        <p class="text-muted">Pour compléter votre look</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Produits Vedettes -->
+    <section class="py-5 bg-light" id="produits">
+        <div class="container">
+            <h2 class="text-center section-title">Produits Vedettes</h2>
+            <div class="row g-4">
+                {% if featuredProducts is defined and featuredProducts %}
+                    {% for product in featuredProducts %}
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card product-card">
+                                {% if product.image %}
+                                    <img src="{{ asset('uploads/products/' ~ product.image) }}" 
+                                         class="card-img-top product-image" 
+                                         alt="{{ product.name }}">
+                                {% else %}
+                                    <div class="product-placeholder">
+                                        <i class="fas fa-tshirt"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ product.name }}</h5>
+                                    <p class="card-text">{{ product.description|slice(0, 50) }}...</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="h5 mb-0 text-success">{{ product.price|number_format(2, ',', ' ') }}€</span>
+                                        {% if app.user %}
+                                            <button class="btn btn-cart btn-sm" onclick="addToCart({{ product.id }})">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </button>
+                                        {% else %}
+                                            <a href="{{ path('app_login') }}" class="btn btn-outline-secondary btn-sm">
+                                                <i class="fas fa-sign-in-alt"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <!-- Produits par défaut si aucun produit vedette n'est défini -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card product-card">
+                            <div class="product-placeholder">
+                                <i class="fas fa-tshirt"></i>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">T-Shirt Premium</h5>
+                                <p class="card-text">Coton bio, coupe moderne</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h5 mb-0 text-success">29€</span>
+                                    {% if app.user %}
+                                        <button class="btn btn-cart btn-sm" disabled>
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    {% else %}
+                                        <a href="{{ path('app_login') }}" class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card product-card">
+                            <div class="product-placeholder">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Chemise Classique</h5>
+                                <p class="card-text">Parfaite pour le bureau</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h5 mb-0 text-success">45€</span>
+                                    {% if app.user %}
+                                        <button class="btn btn-cart btn-sm" disabled>
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    {% else %}
+                                        <a href="{{ path('app_login') }}" class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card product-card">
+                            <div class="product-placeholder">
+                                <i class="fas fa-cut"></i>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Jean Slim</h5>
+                                <p class="card-text">Coupe ajustée tendance</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h5 mb-0 text-success">65€</span>
+                                    {% if app.user %}
+                                        <button class="btn btn-cart btn-sm" disabled>
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    {% else %}
+                                        <a href="{{ path('app_login') }}" class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="card product-card">
+                            <div class="product-placeholder">
+                                <i class="fas fa-shoe-prints"></i>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Sneakers</h5>
+                                <p class="card-text">Confort et style urbain</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="h5 mb-0 text-success">89€</span>
+                                    {% if app.user %}
+                                        <button class="btn btn-cart btn-sm" disabled>
+                                            <i class="fas fa-cart-plus"></i>
+                                        </button>
+                                    {% else %}
+                                        <a href="{{ path('app_login') }}" class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-sign-in-alt"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="text-center mt-4">
+                <a href="{{ path('product_index') }}" class="btn btn-outline-dark btn-lg">Voir tous les produits</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistiques -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-number">{{ stats.total_products ?? '500+' }}</div>
+                    <p>Produits</p>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-number">{{ stats.total_users ?? '2000+' }}</div>
+                    <p>Clients satisfaits</p>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-number">5★</div>
+                    <p>Note moyenne</p>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <div class="stat-number">24h</div>
+                    <p>Livraison rapide</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Témoignages -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center section-title">Avis Clients</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="testimonial-card">
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p>"Excellente qualité des vêtements et livraison très rapide. Je recommande vivement !"</p>
+                        <footer class="blockquote-footer">Marc, Paris</footer>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="testimonial-card">
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p>"Parfait pour renouveler ma garde-robe. Les tailles correspondent parfaitement."</p>
+                        <footer class="blockquote-footer">Thomas, Lyon</footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center">
+                    <h3>Restez informé</h3>
+                    <p class="mb-4">Recevez nos dernières offres et nouveautés</p>
+                    <form class="d-flex gap-2" id="newsletter-form">
+                        <input type="email" class="form-control" placeholder="Votre email" required>
+                        <button class="btn btn-success" type="submit">S'inscrire</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Smooth scroll pour les liens d'ancrage
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Newsletter
+        document.getElementById('newsletter-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('input[type="email"]').value;
+            if (email) {
+                showAlert('success', 'Inscription réussie !');
+                this.querySelector('input[type="email"]').value = '';
+            }
+        });
+    </script>
+{% endblock %}
