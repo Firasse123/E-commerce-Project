@@ -1,0 +1,185 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }} - {{ parent() }}{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+            <li class="breadcrumb-item"><a href="{{ path('product_index') }}">Produits</a></li>
+            {% if product.category %}
+                <li class="breadcrumb-item"><a href="{{ path('product_index', {category: product.category.id}) }}">{{ product.category.name }}</a></li>
+            {% endif %}
+            <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Product Image -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                {% if product.image %}
+                    <img src="{{ asset('uploads/images/' ~ product.image) }}" 
+                         class="card-img-top" 
+                         alt="{{ product.name }}"
+                         style="height: 500px; object-fit: cover;">
+                {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" 
+                         style="height: 500px;">
+                        <i class="fas fa-image fa-5x text-muted"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <!-- Category -->
+                    {% if product.category %}
+                        <div class="mb-2">
+                            <span class="badge bg-secondary">
+                                <i class="fas fa-tag me-1"></i>{{ product.category.name }}
+                            </span>
+                        </div>
+                    {% endif %}
+
+                    <!-- Product Name -->
+                    <h1 class="card-title h2 mb-3">{{ product.name }}</h1>
+
+                    <!-- Price -->
+                    <div class="mb-4">
+                        <span class="display-5 text-primary fw-bold">{{ product.price|number_format(2, ',', ' ') }} €</span>
+                    </div>
+
+                    <!-- Stock Status -->
+                    <div class="mb-4">
+                        {% if product.stock <= 0 %}
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Rupture de stock</strong> - Ce produit n'est actuellement pas disponible
+                            </div>
+                        {% elseif product.stock <= 5 %}
+                            <div class="alert alert-warning" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                <strong>Stock limité</strong> - Plus que {{ product.stock }} exemplaire{{ product.stock > 1 ? 's' : '' }} en stock
+                            </div>
+                        {% else %}
+                            <div class="alert alert-success" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <strong>En stock</strong> - {{ product.stock }} exemplaires disponibles
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <h5><i class="fas fa-info-circle me-2"></i>Description</h5>
+                        <p class="card-text">{{ product.description|nl2br }}</p>
+                    </div>
+
+                    <!-- Add to Cart Section -->
+                    {% if app.user %}
+                        {% if product.stock > 0 %}
+                            <div class="mb-4">
+                                <div class="row g-3">
+                                    <div class="col-4">
+                                        <label for="quantity" class="form-label">Quantité</label>
+                                        <input type="number" 
+                                               class="form-control" 
+                                               id="quantity" 
+                                               value="1" 
+                                               min="1" 
+                                               max="{{ product.stock }}">
+                                    </div>
+                                    <div class="col-8 d-flex align-items-end">
+                                        <button type="button" 
+                                                class="btn btn-cart btn-lg w-100 text-white"
+                                                onclick="addToCartWithQuantity({{ product.id }})">
+                                            <i class="fas fa-cart-plus me-2"></i>Ajouter au panier
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="mb-4">
+                            <div class="alert alert-info" role="alert">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Vous devez être connecté pour ajouter des produits au panier
+                            </div>
+                            <div class="d-grid gap-2">
+                                <a href="{{ path('app_login') }}" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Se connecter
+                                </a>
+                                <a href="{{ path('app_register') }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-user-plus me-2"></i>Créer un compte
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Product Details -->
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="card-title"><i class="fas fa-list me-2"></i>Informations produit</h6>
+                            <ul class="list-unstyled mb-0">
+                                    <li><strong>Référence:</strong> #{{ '%06d'|format(product.id) }}</li> {% if product.category %}
+                                    <li><strong>Catégorie:</strong> {{ product.category.name }}</li>
+                                {% endif %}
+                                <li><strong>Stock:</strong> {{ product.stock }} unité{{ product.stock > 1 ? 's' : '' }}</li>
+                                <li><strong>Prix:</strong> {{ product.price|number_format(2, ',', ' ') }} €</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Products -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="text-center">
+                <a href="{{ path('product_index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Retour aux produits
+                </a>
+                {% if product.category %}
+                    <a href="{{ path('product_index', {category: product.category.id}) }}" class="btn btn-outline-primary ms-2">
+                        <i class="fas fa-tag me-2"></i>Voir produits de la catégorie
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    function addToCartWithQuantity(productId) {
+        const quantity = document.getElementById('quantity').value;
+        addToCart(productId, quantity);
+    }
+
+    // Update max quantity when stock changes
+    document.addEventListener('DOMContentLoaded', function() {
+        const quantityInput = document.getElementById('quantity');
+        if (quantityInput) {
+            quantityInput.addEventListener('input', function() {
+                const max = parseInt(this.getAttribute('max'));
+                if (parseInt(this.value) > max) {
+                    this.value = max;
+                }
+                if (parseInt(this.value) < 1) {
+                    this.value = 1;
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

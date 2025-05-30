@@ -1,0 +1,57 @@
+{# templates/order/confirmation.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande confirmée{% endblock %}
+
+{% block body %}
+<div class="text-center py-5">
+    <div class="mb-4">
+        <i class="fas fa-check-circle fa-5x text-success"></i>
+    </div>
+    
+    <h1 class="text-success">Commande confirmée !</h1>
+    <p class="lead">Merci pour votre commande. Voici les détails :</p>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Commande #{{ order.id }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Informations de livraison:</h6>
+                            <p class="mb-1">{{ order.firstName }} {{ order.lastName }}</p>
+                            <p class="mb-1">{{ order.address }}</p>
+                            <p class="mb-1">{{ order.postalCode }} {{ order.city }}</p>
+                            <p class="mb-0">{{ order.phone }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Détails de commande:</h6>
+                            <p class="mb-1">Date: {{ order.createdAt|date('d/m/Y H:i') }}</p>
+                            <p class="mb-1">Statut: <span class="badge bg-info">{{ order.status }}</span></p>
+                            <p class="mb-0">Total: <strong>{{ order.total|number_format(2) }}€</strong></p>
+                        </div>
+                    </div>
+                    
+                    {% if order.notes %}
+                        <hr>
+                        <h6>Notes:</h6>
+                        <p class="text-muted">{{ order.notes }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <a href="{{ path('order_history') }}" class="btn btn-primary me-2">
+                    <i class="fas fa-list"></i> Mes commandes
+                </a>
+                <a href="{{ path('product_index') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-shopping-bag"></i> Continuer mes achats
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

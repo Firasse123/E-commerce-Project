@@ -1,0 +1,182 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Modifier le produit - {{ product.name }}{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Modifier le produit</h1>
+        <div>
+            <a href="{{ path('admin_product_show', {id: product.id}) }}" class="btn btn-secondary me-2">
+                <i class="fas fa-eye"></i> Voir
+            </a>
+            <a href="{{ path('admin_product_index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Retour à la liste
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Informations du produit</h6>
+                </div>
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+                    
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            {{ form_label(form.name, 'Nom du produit', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Ex: T-shirt homme'}}) }}
+                            {{ form_errors(form.name) }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.price, 'Prix (€)', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            <div class="input-group">
+                                {{ form_widget(form.price, {'attr': {'class': 'form-control', 'placeholder': '0.00', 'step': '0.01'}}) }}
+                                <span class="input-group-text">€</span>
+                            </div>
+                            {{ form_errors(form.price) }}
+                        </div>
+                        
+                        {% if form.stock is defined %}
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.stock, 'Stock', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.stock, {'attr': {'class': 'form-control', 'placeholder': '0', 'min': '0'}}) }}
+                            {{ form_errors(form.stock) }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        {% if form.category is defined %}
+                        <div class="col-md-6 mb-3">
+                            {{ form_label(form.category, 'Catégorie', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                            {{ form_widget(form.category, {'attr': {'class': 'form-select'}}) }}
+                            {{ form_errors(form.category) }}
+                        </div>
+                        {% endif %}
+                        
+                        {% if form.isActive is defined %}
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Statut</label>
+                            <div class="form-check form-switch">
+                                {{ form_widget(form.isActive, {'attr': {'class': 'form-check-input', 'role': 'switch'}}) }}
+                                {{ form_label(form.isActive, 'Produit actif', {'label_attr': {'class': 'form-check-label'}}) }}
+                            </div>
+                            {{ form_errors(form.isActive) }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if form.description is defined %}
+                    <div class="mb-3">
+                        {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': '4', 'placeholder': 'Description détaillée du produit...'}}) }}
+                        {{ form_errors(form.description) }}
+                    </div>
+                    {% endif %}
+
+                    {% if form.image is defined %}
+                    <div class="mb-3">
+                        {{ form_label(form.image, 'Image du produit', {'label_attr': {'class': 'form-label fw-bold'}}) }}
+                        {{ form_widget(form.image, {'attr': {'class': 'form-control', 'accept': 'image/*'}}) }}
+                        {{ form_errors(form.image) }}
+                        {% if product.image %}
+                            <div class="mt-2">
+                                <small class="text-muted">Image actuelle :</small><br>
+                                <img src="{{ asset('uploads/images/' ~ product.image) }}" 
+                                     alt="{{ product.name }}" 
+                                     class="img-thumbnail mt-1" 
+                                     style="max-width: 150px;">
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Sauvegarder les modifications
+                        </button>
+                        <a href="{{ path('admin_product_show', {id: product.id}) }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Annuler
+                        </a>
+                    </div>
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Aperçu actuel</h6>
+                </div>
+                <div class="card-body text-center">
+                    {% if product.image %}
+                        <img src="{{ asset('uploads/images/' ~ product.image) }}" 
+                             alt="{{ product.name }}" 
+                             class="img-fluid rounded shadow-sm mb-3"
+                             style="max-height: 200px;">
+                    {% else %}
+                        <div class="bg-light p-4 rounded mb-3">
+                            <i class="fas fa-image fa-2x text-muted"></i>
+                            <p class="text-muted mt-2 mb-0">Aucune image</p>
+                        </div>
+                    {% endif %}
+                    
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="h6 text-success">{{ product.price|number_format(2, ',', ' ') }} €</p>
+                    
+                    {% if product.isActive %}
+                        <span class="badge bg-success">Actif</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Inactif</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Actions rapides</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <form method="post" action="{{ path('admin_product_toggle_status', {id: product.id}) }}" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('toggle-status' ~ product.id) }}">
+                            {% if product.isActive %}
+                                <button type="submit" class="btn btn-warning w-100" onclick="return confirm('Désactiver ce produit ?')">
+                                    <i class="fas fa-pause"></i> Désactiver
+                                </button>
+                            {% else %}
+                                <button type="submit" class="btn btn-success w-100" onclick="return confirm('Activer ce produit ?')">
+                                    <i class="fas fa-play"></i> Activer
+                                </button>
+                            {% endif %}
+                        </form>
+                        
+                        <form method="post" action="{{ path('admin_product_delete', {id: product.id}) }}" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                            <button type="submit" class="btn btn-outline-danger w-100" onclick="return confirm('Supprimer définitivement ce produit ?')">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-check-input:checked {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+</style>
+{% endblock %}

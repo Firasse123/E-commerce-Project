@@ -1,0 +1,178 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Détails du produit - {{ product.name }}{% endblock %}
+
+{% block body %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Détails du produit</h1>
+        <div>
+            <a href="{{ path('admin_product_index') }}" class="btn btn-secondary me-2">
+                <i class="fas fa-arrow-left"></i> Retour
+            </a>
+            <a href="{{ path('admin_product_edit', {id: product.id}) }}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Modifier
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Informations générales</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <strong>Nom :</strong>
+                        </div>
+                        <div class="col-sm-9">
+                            {{ product.name }}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <strong>Prix :</strong>
+                        </div>
+                        <div class="col-sm-9">
+                            <span class="h5 text-success">{{ product.price|number_format(2, ',', ' ') }} €</span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <strong>Catégorie :</strong>
+                        </div>
+                        <div class="col-sm-9">
+                            {% if product.category %}
+                                <span class="badge bg-info">{{ product.category.name }}</span>
+                            {% else %}
+                                <span class="text-muted">Aucune catégorie</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <strong>Stock :</strong>
+                        </div>
+                        <div class="col-sm-9">
+                            {% if product.stock is defined %}
+                                {% if product.stock <= 5 %}
+                                    <span class="badge bg-danger">{{ product.stock }} unités (Stock faible)</span>
+                                {% elseif product.stock <= 10 %}
+                                    <span class="badge bg-warning">{{ product.stock }} unités</span>
+                                {% else %}
+                                    <span class="badge bg-success">{{ product.stock }} unités</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="text-muted">Non défini</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <strong>Statut :</strong>
+                        </div>
+                        <div class="col-sm-9">
+                            {% if product.isActive %}
+                                <span class="badge bg-success">Actif</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactif</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <strong>Créé le :</strong>
+                        </div>
+                        <div class="col-sm-9">
+                            {% if product.createdAt is defined %}
+                                {{ product.createdAt|date('d/m/Y à H:i') }}
+                            {% else %}
+                                <span class="text-muted">Non défini</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if product.updatedAt is defined %}
+                    <div class="row mb-3">
+                        <div class="col-sm-3">
+                            <strong>Modifié le :</strong>
+                        </div>
+                        <div class="col-sm-9">
+                            {{ product.updatedAt|date('d/m/Y à H:i') }}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <form method="post" action="{{ path('admin_product_toggle_status', {id: product.id}) }}" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('toggle-status' ~ product.id) }}">
+                            {% if product.isActive %}
+                                <button type="submit" class="btn btn-warning w-100 mb-2" onclick="return confirm('Voulez-vous vraiment désactiver ce produit ?')">
+                                    <i class="fas fa-pause"></i> Désactiver le produit
+                                </button>
+                            {% else %}
+                                <button type="submit" class="btn btn-success w-100 mb-2" onclick="return confirm('Voulez-vous vraiment activer ce produit ?')">
+                                    <i class="fas fa-play"></i> Activer le produit
+                                </button>
+                            {% endif %}
+                        </form>
+                        
+                        <form method="post" action="{{ path('admin_product_delete', {id: product.id}) }}" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                            <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Voulez-vous vraiment supprimer ce produit ? Cette action est irréversible.')">
+                                <i class="fas fa-trash"></i> Supprimer le produit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Image du produit</h6>
+                </div>
+                <div class="card-body text-center">
+                    {% if product.image %}
+                        <img src="{{ asset('uploads/images/' ~ product.image) }}" 
+                             alt="{{ product.name }}" 
+                             class="img-fluid rounded shadow"
+                             style="max-height: 300px;">
+                    {% else %}
+                        <div class="bg-light p-5 rounded">
+                            <i class="fas fa-image fa-3x text-muted"></i>
+                            <p class="text-muted mt-3">Aucune image</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if product.description %}
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Description</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-gray-700">{{ product.description|nl2br }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
