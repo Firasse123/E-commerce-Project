@@ -79,8 +79,7 @@
                                 </div>
                                 
                                 <div class="col-md-1">
-                                    <form action="{{ path('cart_remove', {id: item.id}) }}" method="post" class="remove-form">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('remove-cart-' ~ item.id) }}">
+                                        <form action="{{ path('cart_remove', {id: item.product.id}) }}" method="post" class="remove-form">                                        <input type="hidden" name="_token" value="{{ csrf_token('remove-cart-' ~ item.id) }}">
                                         <button type="submit" class="btn btn-outline-danger btn-sm" 
                                                 onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?')">
                                             <i class="fas fa-trash"></i>

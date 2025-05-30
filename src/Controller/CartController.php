@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Repository\ProductRepository;
 use App\Service\CartService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,8 +38,21 @@ class CartController extends AbstractController
     }
 
     #[Route('/add/{id}', name: 'cart_add', methods: ['POST'])]
-    public function add(Product $product, Request $request, CartService $cartService): Response
+    public function add(int $id, Request $request, CartService $cartService, ProductRepository $productRepository): Response
     {
+        // Récupération manuelle du produit
+        $product = $productRepository->find($id);
+        if (!$product) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse([
+                    'success' => false,
+                    'message' => 'Produit non trouvé'
+                ], 404);
+            }
+            $this->addFlash('error', 'Produit non trouvé');
+            return $this->redirectToRoute('product_index');
+        }
+
         $user = $this->getUser();
         $quantity = $request->request->getInt('quantity', 1);
         
@@ -62,8 +76,14 @@ class CartController extends AbstractController
     }
 
     #[Route('/remove/{id}', name: 'cart_remove')]
-    public function remove(Product $product, CartService $cartService): Response
+    public function remove(int $id, CartService $cartService, ProductRepository $productRepository): Response
     {
+        $product = $productRepository->find($id);
+        if (!$product) {
+            $this->addFlash('error', 'Produit non trouvé');
+            return $this->redirectToRoute('cart_index');
+        }
+
         $user = $this->getUser();
         $success = $cartService->removeFromCart($user, $product);
         
@@ -77,8 +97,20 @@ class CartController extends AbstractController
     }
 
     #[Route('/update/{id}', name: 'cart_update', methods: ['POST'])]
-    public function update(Product $product, Request $request, CartService $cartService): Response
+    public function update(int $id, Request $request, CartService $cartService, ProductRepository $productRepository): Response
     {
+        $product = $productRepository->find($id);
+        if (!$product) {
+            if ($request->isXmlHttpRequest()) {
+                return new JsonResponse([
+                    'success' => false,
+                    'message' => 'Produit non trouvé'
+                ], 404);
+            }
+            $this->addFlash('error', 'Produit non trouvé');
+            return $this->redirectToRoute('cart_index');
+        }
+
         $user = $this->getUser();
         $quantity = $request->request->getInt('quantity', 1);
         
