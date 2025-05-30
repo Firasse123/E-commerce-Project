@@ -40,7 +40,7 @@ class Product
     private ?int $stock = null;
 
     #[ORM\Column(type: 'integer')]
-    public ?int $totalSold = 0;
+    private ?int $totalSold = 0;
 
     #[ORM\Column]
     private ?bool $isActive = true;
