@@ -10,19 +10,59 @@ class OrderItem
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private int $quantity;
+    #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'orderItems')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Order $order = null;
 
-    #[ORM\ManyToOne(inversedBy: 'orderItems')]
+    #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?Product $product = null;
+
+    #[ORM\Column(type: 'integer')]
+    private int $quantity;
+
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
+    private string $unitPrice;
+
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
+    private string $totalPrice;
+
+    #[ORM\Column(type: 'datetime')]
+    private \DateTimeInterface $createdAt;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getOrder(): ?Order
+    {
+        return $this->order;
+    }
+
+    public function setOrder(?Order $order): self
+    {
+        $this->order = $order;
+        return $this;
+    }
+
+    public function getProduct(): ?Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(?Product $product): self
+    {
+        $this->product = $product;
+        return $this;
     }
 
     public function getQuantity(): int
@@ -36,14 +76,36 @@ class OrderItem
         return $this;
     }
 
-    public function getProduct(): ?Product
+    public function getUnitPrice(): string
     {
-        return $this->product;
+        return $this->unitPrice;
     }
 
-    public function setProduct(?Product $product): self
+    public function setUnitPrice(string $unitPrice): self
     {
-        $this->product = $product;
+        $this->unitPrice = $unitPrice;
+        return $this;
+    }
+
+    public function getTotalPrice(): string
+    {
+        return $this->totalPrice;
+    }
+
+    public function setTotalPrice(string $totalPrice): self
+    {
+        $this->totalPrice = $totalPrice;
+        return $this;
+    }
+
+    public function getCreatedAt(): \DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
         return $this;
     }
 }
