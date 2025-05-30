@@ -62,7 +62,13 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <h4>{{ (orderStats.totalRevenue / orderStats.totalOrders)|number_format(2, ',', ' ') }} €</h4>
+                        <h4>
+                            {% if orderStats.totalOrders > 0 %}
+                                {{ (orderStats.totalRevenue / orderStats.totalOrders)|number_format(2, ',', ' ') }} €
+                            {% else %}
+                                0 €
+                            {% endif %}
+                        </h4>                        
                         <p class="mb-0">Panier moyen</p>
                     </div>
                     <div class="align-self-center">
@@ -88,35 +94,6 @@
             </div>
         </div>
     </div>
-    
-    <!-- Top Products -->
-    <div class="col-lg-4 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-trophy me-2"></i>Top produits
-                </h5>
-            </div>
-            <div class="card-body">
-                {% if topProducts %}
-                    <div class="list-group list-group-flush">
-                        {% for product in topProducts %}
-                            <div class="list-group-item d-flex justify-content-between align-items-center px-0">
-                                <div>
-                                    <strong>{{ product.name }} </strong>
-                                    <br>
-                                    <small class="text-muted">{{ product.price|number_format(2, ',', ' ') }} €</small>
-                                </div>
-                                <span class="badge bg-primary rounded-pill">{{ product.totalSold ?? 0 }}</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <p class="text-muted text-center">Aucune donnée disponible</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
 </div>
 
 <div class="row">
@@ -130,20 +107,6 @@
             </div>
             <div class="card-body">
                 <canvas id="monthlyChart" width="400" height="300"></canvas>
-            </div>
-        </div>
-    </div>
-    
-    <!-- User Registrations -->
-    <div class="col-lg-6 mb-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-people me-2"></i>Inscriptions utilisateurs (30 derniers jours)
-                </h5>
-            </div>
-            <div class="card-body">
-                <canvas id="registrationChart" width="400" height="300"></canvas>
             </div>
         </div>
     </div>
